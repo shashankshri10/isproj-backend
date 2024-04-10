@@ -49,11 +49,7 @@ class MotorService:
             conn = await connect_to_pg()
             query='''SELECT * FROM motor_data WHERE motor_id = $1 ORDER BY timestamp DESC LIMIT 10;'''
             rows = await conn.fetch(query,motor_id)
-            motor_details_list = await conn.fetch('''SELECT (motor_id, power_rating, location) FROM motor_details WHERE motor_id=$1''', motor_id)
-            if motor_details_list:
-                motor_details = motor_details_list[0]  # Assuming only one record is returned
-            else:
-                motor_details = None
+            motor_details= await conn.fetchrow('''SELECT motor_id, power_rating, location FROM motor_details WHERE motor_id=$1''', motor_id)
             timestamps = [obj["timestamp"] for obj in rows]
             current_values = [round(obj["current_value"], 2) for obj in rows]
             freq_values = [round(obj["frequency"], 2) for obj in rows]

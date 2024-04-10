@@ -71,8 +71,8 @@ def create_pdf_with_plots(file_name, motor_condition, RUL_value, timestamps, cur
     # Add some content
     content = [
         Spacer(1, 0.005*inch),  # Adjusted the spacer size to reduce top margin
-        Paragraph(f"<b>Motor Number:</b> 444", styles['Heading2']),
-        Paragraph(f"<b>Power Rating:</b> 5 HP", styles['Heading2']),
+        Paragraph(f"<b>Motor Number:</b> {motor_details['motor_id']}", styles['Heading2']),
+        Paragraph(f"<b>Power Rating:</b> {motor_details['power_rating']} HP", styles['Heading2']),
         Spacer(1, 0.1*inch),  # Adjusted the spacer size to reduce bottom margin
         Paragraph("<b>Operating Condition Summary for 1 Month:</b>", styles['Heading2'])
     ]
