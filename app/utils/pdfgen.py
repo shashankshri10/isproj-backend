@@ -7,6 +7,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import numpy as np
 import io
+import base64
 
 class MyBorderedDocTemplate(SimpleDocTemplate):
     def __init__(self, *args, **kwargs):
@@ -18,11 +19,12 @@ class MyBorderedDocTemplate(SimpleDocTemplate):
         if hasattr(flowable, 'split') and self.page_num > 0:
             self.page_num += 1
 
-def create_plot():
+def create_plot(timestamps,current_values,freq_values):
     # Generate some sample data
-    x = np.linspace(0, 10, 100)
-    y1 = np.sin(x)
-    y2 = np.cos(x)
+    # timestamps = [datetime.strptime(ts, "%Y-%m-%dT%H:%M:%S.%f") for ts in timestamps]
+    x = timestamps
+    y1 = current_values
+    y2 = freq_values
 
     # Create the plot
     plt.figure(figsize=(6, 4.5))  # Adjusted the height of the plots
@@ -50,7 +52,7 @@ def create_plot():
 
     return buffer
 
-def create_pdf_with_plots(file_name, motor_condition, RUL_value, fault_type=None):
+def create_pdf_with_plots(file_name, motor_condition, RUL_value, timestamps, current_values, freq_values,motor_details,fault_type=None):
     doc = MyBorderedDocTemplate(file_name, pagesize=letter, leftMargin=0.5*inch, rightMargin=0.5*inch)
     styles = getSampleStyleSheet()
 
@@ -69,8 +71,8 @@ def create_pdf_with_plots(file_name, motor_condition, RUL_value, fault_type=None
     # Add some content
     content = [
         Spacer(1, 0.005*inch),  # Adjusted the spacer size to reduce top margin
-        Paragraph("<b>Motor Number:</b> M12345", styles['Heading2']),
-        Paragraph("<b>Power Rating:</b> 5 HP", styles['Heading2']),
+        Paragraph(f"<b>Motor Number:</b> 444", styles['Heading2']),
+        Paragraph(f"<b>Power Rating:</b> 5 HP", styles['Heading2']),
         Spacer(1, 0.1*inch),  # Adjusted the spacer size to reduce bottom margin
         Paragraph("<b>Operating Condition Summary for 1 Month:</b>", styles['Heading2'])
     ]
@@ -79,7 +81,7 @@ def create_pdf_with_plots(file_name, motor_condition, RUL_value, fault_type=None
         content.append(Paragraph(f"<b>Fault type:</b> {fault_type}", styles['Normal']))
 
     # Create the plots
-    plot_buffer = create_plot()
+    plot_buffer = create_plot(timestamps,current_values,freq_values)
     img = Image(plot_buffer)
     content.append(img)
 
@@ -122,9 +124,17 @@ def create_pdf_with_plots(file_name, motor_condition, RUL_value, fault_type=None
 
     content.append(Paragraph("Suggestions Based On Current Situation: Normal", styles['Heading2']))
 
+    # buffer=io.BytesIO()
     doc.build(content)
 
+    # pdf_bytes = buffer.getvalue()
+    # buffer.close()
+    # return base64.b64encode(pdf_bytes).decode('utf-8')
+
 if __name__ == "__main__":
-    file_name = "output.pdf"
-    create_pdf_with_plots(file_name, motor_condition="Healthy", RUL_value=0.82)
+    file_name = "output2.pdf"
+    timestamps = ['2024-02-08T17:17:32.376878', '2024-02-08T17:15:24.369542']
+    current_values = [37.07567850886906, 24.931846300993207]
+    frequencies = [56.906892493155894, 53.26955751881195]
+    create_pdf_with_plots(file_name, motor_condition="Healthy", RUL_value=0.82,timestamps=timestamps,current_values=current_values,freq_values=frequencies)
     print(f"PDF generated successfully: {file_name}")

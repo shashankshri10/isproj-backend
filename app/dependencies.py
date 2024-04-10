@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM") 
 # asset_service = AssetService()
 
-async def verify_token(token: Optional[str] = Header(None)) -> str:
+async def verify_token(token: Optional[str] = Header(None)) -> int:
     if not token:
         raise HTTPException(status_code=401, detail="Missing token")
     try:
@@ -19,10 +19,11 @@ async def verify_token(token: Optional[str] = Header(None)) -> str:
         user_id: str = payload.get("user_id")
         if user_id is None:
             raise HTTPException(status_code=401, detail="Invalid token")
+        user_id_int=int(user_id)
         expiration = payload.get("exp")
-        if expiration is not None and expiration < datetime.timestamp():
+        if expiration is not None and expiration < datetime.now().timestamp():
             raise HTTPException(status_code=401, detail="Token has expired")
-        return user_id
+        return user_id_int
     except jwt.JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 

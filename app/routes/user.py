@@ -4,7 +4,11 @@ from app.models.login_user import LoginUser
 from app.services.user_service import UserService
 from app.db import connect_to_pg
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/user",
+    tags=["user"],
+    responses={404: {"description": "Not found"}},
+)
 user_service = UserService()
 
 @router.post("/register/")
