@@ -6,7 +6,7 @@ from app.models.motor import MotorData
 from ..services.motor_service import MotorService
 
 router = APIRouter(
-    prefix="/motor",
+    prefix="/api/motor",
     tags=["motor"],
     responses={404: {"description": "Not found"}},
 )

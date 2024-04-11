@@ -5,7 +5,7 @@ from app.services.user_service import UserService
 from app.db import connect_to_pg
 
 router = APIRouter(
-    prefix="/user",
+    prefix="/api/user",
     tags=["user"],
     responses={404: {"description": "Not found"}},
 )
